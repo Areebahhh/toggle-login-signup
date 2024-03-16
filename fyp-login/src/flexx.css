@@ -1,0 +1,32 @@
+.flex-container {
+    display: flex;
+    /* background-color: DodgerBlue; */
+    
+  }
+  
+  .flex-container > div {
+    /* background-color: #f1f1f1; */
+    margin: 5px;
+    padding: 2x;
+    font-size: 30px;
+  }
+
+  .flex-container-left {
+    display: flex;
+    flex-direction: column;
+    
+  }
+
+  .flex-container-right {
+    display: flex;
+    flex-direction: column;
+    
+    
+  }
+
+  /* .flex-container2 > div { */
+    /* background-color: #f1f1f1; */
+    /* margin: 5px;
+    padding: 2x;
+    font-size: 30px;
+  } */
