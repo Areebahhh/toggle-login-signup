@@ -144,19 +144,45 @@ const [studentInputs, setStudentInputs] = useState({
 
 const [err, setErr] = useState(null);
 
+const [message, setMessage] = useState(""); // For success or error messages
+
+
 const handleChange = (e) => {
+
+ // Reset messages when user starts editing the form again
+ setMessage("");
+ setErr(null);
+
+
   setStudentInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 };
 
+// og code
+// const handleClick = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     await axios.post("http://localhost:8800/api/auth/studentregister", studentInputs);
+//   } catch (err) {
+//     setErr(err.response.data);
+//   }
+// };
+
+
 const handleClick = async (e) => {
   e.preventDefault();
-
   try {
-    await axios.post("http://localhost:8800/api/auth/studentregister", studentInputs);
+    const response = await axios.post("http://localhost:8800/api/auth/studentregister", studentInputs);
+    console.log(response.data); // Log the successful response data
+    setMessage(response.data || "User created successfully!");
+    setErr(null); // Reset any previous errors
   } catch (err) {
-    setErr(err.response.data);
+    console.error(err);
+    setErr(err.response?.data || 'An unexpected error occurred');
   }
 };
+
+
 
 console.log(err)
 
@@ -403,15 +429,24 @@ console.log(err)
 
         <div className="pass-link"><a href="#">Forgot password?</a></div>
        
-        {/* <div className="field btn"> */}
-          {/* <div className="btn-layer" /> */}
+        <div className="field btn"> 
+          <div className="btn-layer" >
           
-          {err && err}
+          
           {/* <input type="submit"  /> */}
           {/* <input type="submit" defaultValue="Login" /> */}
             <button onClick={handleClick}>Register</button>
-        {/* </div> */}
+        </div>
+        </div>
 
+        {err && err}
+        
+        
+
+       
+  {/* Display message if it exists */}
+  {/* {message && <div className={`message ${err ? 'error' : 'success'}`}>{message}
+  </div>} */}
 
 
 
