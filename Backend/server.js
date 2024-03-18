@@ -46,6 +46,8 @@ app.listen(8800, () => {
 
 app.use("/api/auth", authRoutes);
 
+// BACKEND API FOR SENDING DATA INTO THE UNIDOMAINS TABLE
+
 app.post('/add-to-unidomains', (req, res) => {
   const { uniEmail, uniPass, uniName } = req.body;
 
@@ -64,3 +66,8 @@ app.post('/add-to-unidomains', (req, res) => {
     res.status(200).send('Data added successfully');
   });
 });
+
+// BACKEND API FOR SENDING DATA INTO THE UNIDOMAINS TABLE
+
+
+

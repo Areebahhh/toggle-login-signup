@@ -1,82 +1,3 @@
-// import { db } from "../connect.js";
-//  import bcrypt from "bcryptjs"; 
-//  import jwt from "jsonwebtoken";
-
-//  export const studentregister = (req, res) => {
-//     //CHECK USER IF EXISTS
-  
-//      // Extract the email entered by the user from the request body
-    
-//     const uniEmail = req.body.uniEmail;
-// console.log(uniEmail); // Add this line to log the email being checked
-// console.log("hello")
-
-
-//     // Prepare the SQL query to search for the email in the unidomains table
-//     const query = "SELECT * FROM unidomains WHERE uniEmail = ?";
-    
-  
-//     db.query(query, [uniEmail], (err, data) => {
-//         if (err) {
-//             // If there is an error executing the query, return a 500 status code with the error message
-//             return res.status(500).json(err);
-            
-//         }
-
-//         if (data.length === 0) {
-//           return res.status(404).json("Email does not exist");
-//         }
-        
-//         // Assuming uniPass is the name of the field in the request body for the password
-//         const passwordIsValid = bcrypt.compareSync(req.body.uniPassword, data[0].uniPass);
-        
-//         console.log(req.body.uniPassword);
-//         console.log(data[0].uniPass);
-
-//         console.log("Password valid:", passwordIsValid);
-
-
-//         if (!passwordIsValid) {
-//           return res.status(400).json("Wrong password or email!");
-//       }
-
-//        // Assuming the validation is successful, and we proceed to create the user
-//         // Hash the passwords
-//         const salt = bcrypt.genSaltSync(10);
-//         const hasheduniPassword = bcrypt.hashSync(req.body.uniPassword, salt);
-//         const hashedweconnectPassword = bcrypt.hashSync(req.body.weconnectPassword, salt);
-
-
-
-//         // Your INSERT query
-//         const insertQuery = "INSERT INTO students (`first name`, `last name`, `uniEmail`, `date of birth`, `nationality`, `phone number`, `uniPass`, `Weconnect Pass`) VALUES (?)";
-//         const values = [
-//             req.body.firstname,
-//             req.body.lastname,
-//             req.body.uniEmail,
-//             req.body.dob,
-//             req.body.nationality,
-//             req.body.phonenum,
-//             hasheduniPassword,
-//             hashedweconnectPassword,
-//         ];
-
-//         db.query(insertQuery, [values], (insertErr, insertData) => {
-//             if (insertErr) return res.status(500).json(insertErr);
-//             return res.status(200).json("Student user has been created.");
-
-
-
-
-//           });
-//         });
-//     };
-
-
-
-
-
-
 import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -125,6 +46,97 @@ export const studentregister = (req, res) => {
 
 
 
+export const recruiterregister = (req, res) => {
+  //CHECK USER IF EXISTS
+
+  const q = "SELECT * FROM recruiters WHERE RecEmail = ?";
+
+  db.query(q, [req.body.RecEmail], (err, data) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    
+
+    if (data.length) {
+      console.log(data)
+      console.log("Recruiter already exists!")
+      return res.status(409).json("Recruiter already exists!");
+    }
+    
+    //CREATE A NEW RECRUITER
+    //Hash the password
+    const salt = bcrypt.genSaltSync(10);
+    const rechashedPassword = bcrypt.hashSync(req.body.RecPass, salt);
+
+    const q =
+      "INSERT INTO recruiters (`RecFirstname`,`RecLastname`,`RecEmail`,`CompanyName`, `RecCountry`, `RecPhoneNum`, `RecPass`) VALUES (?)";
+
+    const values = [
+      req.body.RecFirstname,
+      req.body.RecLastname,
+      req.body.RecEmail,
+      req.body.CompanyName,
+      req.body.RecCountry,
+      req.body.RecPhoneNum,
+      rechashedPassword
+      
+    ];
+
+    db.query(q, [values], (err, data) => {
+      if (err) return res.status(500).json(err);
+      console.log("Recruiter has been created.")
+      return res.status(200).json("Recruiter has been created.");
+    });
+  });
+};
+
+
+
+
+
+export const login = (req, res) => {
+
+  // First, try to find the user in the students table.
+  let q = "SELECT * FROM students WHERE uniEmail = ?";
+
+  db.query(q, [req.body.email], (err, data) => {
+    if (err) return res.status(500).json(err);
+
+    if (data.length > 0) {
+
+      const checkPassword = bcrypt.compareSync(req.body.password, data[0].uniPass);
+      if (!checkPassword) return res.status(400).json("Wrong password!");
+
+      // Continue with login process for student...
+      const token = jwt.sign({ id: data[0].id, type: "student" }, "secretkey");
+      const { uniPass, ...others } = data[0];
+      return res.cookie("accessToken", token, { httpOnly: true }).status(200).json(others);
+
+    } else {
+
+       // If not found in students, try recruiters table.
+       q = "SELECT * FROM recruiters WHERE RecEmail = ?";
+
+       
+      db.query(q, [req.body.email], (err, data) => {
+        if (err) return res.status(500).json(err);
+        
+        if (data.length === 0) return res.status(404).json("User not found!");
+
+        const checkPassword = bcrypt.compareSync(req.body.password, data[0].RecPass);
+        if (!checkPassword) return res.status(400).json("Wrong password!");
+
+        // Continue with login process for recruiter...
+        const token = jwt.sign({ id: data[0].id, type: "recruiter" }, "secretkey");
+        const { Recpass, ...others } = data[0];
+        return res.cookie("accessToken", token, { httpOnly: true }).status(200).json(others);
+
+
+      });
+    }
+  });
+};
 
 
 
@@ -132,63 +144,3 @@ export const studentregister = (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      // if (data.length) {
-      //       // If the query returns a row, it means the email exists in the unidomains table
-      //       // return res.status(200).json("Email exists in the unidomains table.");
-
-
-      //       // CHECKING PASSWORD'S LOGIC
-      //       // Assuming data[0] contains the user row
-      //   const user = data[0];
-      //    // Now compare the hashed password
-      //    const passwordIsValid = bcrypt.compareSync(req.body.uniPassword, user.uniPass);
-      //    console.log(req.body.uniPassword);
-      //    console.log(user.uniPass);
-
-      //    if (passwordIsValid) {
-      //     // Proceed with user creation
-
-      //       // CHECKING PASSWORD'S LOGIC
-
-
-      //   //CREATE A NEW USER
-      // //Hash the password
-      // const salt = bcrypt.genSaltSync(10);
-      // const hasheduniPassword = bcrypt.hashSync(req.body.uniPassword, salt);
-      // const hashedweconnectPassword = bcrypt.hashSync(req.body.weconnectPassword, salt);
-
-
-            
-      //   }
-      //   else {
-      //      // Password does not match
-      //      return res.status(401).json("Password does not match.");
-      //   }
-      // }
-
-      //   else {
-      //       // If the query does not return any rows, it means the email does not exist in the table
-      //       return res.status(404).json("Email does not exist in the unidomains table.");
-      //   }
-
-
-
-    // });

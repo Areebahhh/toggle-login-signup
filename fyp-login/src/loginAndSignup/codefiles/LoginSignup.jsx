@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import "../cssfiles/togglepg.css"
 import "../cssfiles/signUpandIn.css"
 import "../cssfiles/flexx.css"
-// fyp-login\src\loginAndSignup\cssfiles\flexx.css
 import { setupToggle } from './toggleForm';
+
+import { AuthContext } from "../../context/authContext";
+
 // Sign Up as well as Login page
 
 function LoginSignup() {
@@ -14,99 +16,42 @@ function LoginSignup() {
     setupToggle();
   }, []);
 
-// Sign Up functionality related javascript
-//     const navigate = useNavigate();
-
-//     const [values, setValues] = useState({
-//     name: '',
-//     email: '',
-//     password: ''
-// });
-
-const[errors, setErrors] = useState({});
-
-const [successMessage, setSuccessMessage] = useState('');
-const [errorMessage, setErrorMessage] = useState('');
 
 
-const handleInput = (event) =>
-{
-    setValues((prev) => ({...prev, [event.target.name]: event.target.value}));
-};
+// LKSEFJSLFHALJ
+// const[errors, setErrors] = useState({});
 
-// const handleSubmit = async (event) =>
+// const [successMessage, setSuccessMessage] = useState('');
+// const [errorMessage, setErrorMessage] = useState('');
+
+
+// const handleInput = (event) =>
 // {
-//     event.preventDefault();
-//     // setErrors(Validation(values));
-//     // console.log(values);
-
-//     try {
-//       const response = await axios.post('http://localhost:5000/api/CreateUser', {
-//         name: values.name,
-//         email: values.email,
-//         password: values.password
-//       });
-//       console.log("successful");
-//       //give the file name after api
-//       setSuccessMessage('Signup successful!'); // Set success message
-//       setErrorMessage(''); // Clear any previous error message
-      
-//     } catch (error) {
-//       console.error('Error creating user:', error);
-//       setErrorMessage('Signup failed. Please try again.'); // Set error message
-//       setSuccessMessage(''); // Clear any previous success message
-      
-//     }
+//     setValues((prev) => ({...prev, [event.target.name]: event.target.value}));
 // };
-// Sign Up functionality related javascript
-
+// LNWEOFWHEOH
 
 
 // Login functionality related javascript VISUAL
 
-const [lvalues, setlValues] = useState({
-    email: '',
-    password: ''
-})
+// KLAEJFIN;OFW;I
+// const [lvalues, setlValues] = useState({
+//     email: '',
+//     password: ''
+// })
 
-const[lerrors, setlErrors] = useState({})
+// const[lerrors, setlErrors] = useState({})
 
-const handleLogInput = (logevent) =>
-{
-    setlValues(prev => ({...prev, [logevent.target.name]: logevent.target.value}));
-}
-
-// const handleLogSubmit = async (logevent) =>
+// const handleLogInput = (logevent) =>
 // {
-//     logevent.preventDefault();
-//     // setErrors(Validation(lvalues));
-
-// try {
-//   // Perform login operation
-
-//   const response = await axios.post("http://localhost:5000/api/LoginUser", {
-//     email: lvalues.email,
-//     password: lvalues.password,
-//   });
-//   console.log('Login successful');
-//   setSuccessMessage('Login successful!'); // Set success message
-//   setErrorMessage(''); // Clear any previous error message
-//   navigate('/');
-// } catch (lerror) {
-//   console.error('Error during login:', lerror);
-//   setErrorMessage('Invalid credentials. Please try again.'); // Set error message
-//   setSuccessMessage(''); // Clear any previous success message
+//     setlValues(prev => ({...prev, [logevent.target.name]: logevent.target.value}));
 // }
-// };
-// Login functionality related javascript
-
-
-// fetchData(); // Call the async function
+// JALKEHNCINQ'RE
 
 
 
 
-    //visual effects funtionality
+//visual effects funtionality
     useEffect(() => {
         const handleButtonClick = () => {
           const cont = document.querySelector('.cont');
@@ -118,8 +63,6 @@ const handleLogInput = (logevent) =>
           imgBtn.addEventListener('click', handleButtonClick);
         }
 
-
-
         return () => {
             // Cleanup the event listener on component unmount
             if (imgBtn) {
@@ -127,9 +70,63 @@ const handleLogInput = (logevent) =>
             }
           };
         }, []);
+//visual effects funtionality
       
-// NEW CODE FOR NEW SIGNUPS LOGIC
 
+
+
+// LOGIN LOGIC CODE
+
+const { login } = useContext(AuthContext);
+
+
+const [loginputs, setlogInputs] = useState({
+  email: "",
+  password: "",
+});
+
+const [logerr, setlogErr] = useState(null);
+// Step 1: Define a new state variable for the login message
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+const navigate = useNavigate()
+
+const loghandleChange = (e) => {
+  setlogInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+};
+
+const loghandleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    await login(loginputs);
+    // navigate("/test")
+
+    // Step 2: Update the state on successful login
+    setIsLoggedIn(true);
+    
+  } catch (logerr) {
+    setlogErr(logerr.response.data);
+    setIsLoggedIn(false); // Optionally reset on error
+  }
+
+
+};
+
+
+
+
+
+
+
+
+
+
+// LOGIN LOGIC CODE
+
+
+
+
+// STUDENT SIGN UP LOGIC CODE
 const [studentInputs, setStudentInputs] = useState({
   firstname: "",
   lastname: "",
@@ -157,17 +154,6 @@ const handleChange = (e) => {
   setStudentInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 };
 
-// og code
-// const handleClick = async (e) => {
-//   e.preventDefault();
-
-//   try {
-//     await axios.post("http://localhost:8800/api/auth/studentregister", studentInputs);
-//   } catch (err) {
-//     setErr(err.response.data);
-//   }
-// };
-
 
 const handleClick = async (e) => {
   e.preventDefault();
@@ -182,9 +168,45 @@ const handleClick = async (e) => {
   }
 };
 
-
-
 console.log(err)
+// STUDENT SIGN UP LOGIC CODE
+
+
+// RECRUITER SIGN UP LOGIC
+// rec = recruiter
+
+const [recInputs, setrecInputs] = useState({
+
+  RecFirstname: "",
+  RecLastname: "",
+  RecEmail: "",
+  CompanyName: "",
+  RecCountry: "",
+  RecPhoneNum: "",
+  RecPass: ""
+               
+
+});
+
+const [recerr, setrecErr] = useState(null);
+
+const rechandleChange = (e) => {
+  setrecInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+};
+
+const rechandleClick = async (e) => {
+  e.preventDefault();
+
+  try {
+    await axios.post("http://localhost:8800/api/auth/recruiterregister", recInputs);
+  } catch (recerr) {
+    setrecErr(recerr.response.data);
+  }
+};
+
+console.log(recerr)
+
+// RECRUITER SIGN UP LOGIC
 
 
 
@@ -192,34 +214,15 @@ console.log(err)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 
   return (
     
 <>
     
+{/* LOGIN FORM */}
+{/* IIIIINNNNNNNN */}
 
-    {/* IIIIINNNNNNNN */}
+
     
     <div className="cont"> {/* biggest main div for both  */}
   {/* Sign In Form */}
@@ -227,30 +230,63 @@ console.log(err)
     <h2>Welcome</h2>
 
     <label>
+
       <span>Email</span>
-      <input type="email" placeholder='Enter your Email' name='email'
-      // onChange={handleLogInput} 
+
+      <input type="email" 
+      placeholder='Enter your Email' 
+      name='email'
+      onChange={loghandleChange} 
       className='form-control rounded-0'/>
-      {lerrors.email && <span className='text-danger'>{lerrors.email}</span>}
+
+      {/* {log.email && <span className='text-danger'>{lerrors.email}</span>} */}
+   
     </label>
+
 
     <label>
-      <span>Password</span>
-      <input type="password" placeholder='Enter your Password' name='password'
-      // onChange={handleLogInput} 
-      className='form-control rounded-0'/>
-      {lerrors.password && <span className='text-danger'>{lerrors.password}</span>}
-    </label>
-    <p className="forgot-pass">Forgot password?</p>
-    <button type="button" className="submit" 
-    // onClick={handleLogSubmit} 
-    style={{ display: 'block', margin: 'auto' }}>Sign In</button>
 
-    {errorMessage && <div className="error-message">{errorMessage}</div>}
-  {successMessage && <div className="success-message">{successMessage}</div>}
+      <span>Password</span>
+
+      <input type="password" 
+      placeholder='Enter your Password' 
+      name='password'
+      onChange={loghandleChange} 
+      className='form-control rounded-0'/>
+
+      {/* {lerrors.password && <span className='text-danger'>{lerrors.password}</span>} */}
+    
+    </label>
+
+
+    <p className="forgot-pass">Forgot password?</p>
+
+    <button 
+
+    type="button" 
+    // className="submit" 
+    onClick={loghandleLogin} 
+    style={{ display: 'block', margin: 'auto' }}>
+    
+    Login
+
+    </button>
+
+    {/* Step 3: Display the logged-in message conditionally */}
+    {isLoggedIn && <p>You are logged in!</p>}
+      {/* Display login errors if any */}
+      {logerr && <p>Error: {logerr}</p>}
+
+
+  {/* {errorMessage && <div className="error-message">{errorMessage}</div>}
+  {successMessage && <div className="success-message">{successMessage}</div>} */}
 
   </div>
+
+
+
 {/* IIIIINNNNNNNN */}
+{/* LOGIN FORM */}
 
 
 
@@ -323,7 +359,7 @@ console.log(err)
 
 
 
-{/* STUDENT SIGN UP */}
+{/* STUDENT SIGN UP FORM */}
       {/* considering login as the student sign up side of the toggle func */}
       <form action="#" className="login">
 
@@ -423,17 +459,12 @@ console.log(err)
         </div> {/* flex container div */}
 
 
-        
-  
-
-
         <div className="pass-link"><a href="#">Forgot password?</a></div>
        
         <div className="field btn"> 
           <div className="btn-layer" >
           
           
-          {/* <input type="submit"  /> */}
           {/* <input type="submit" defaultValue="Login" /> */}
             <button onClick={handleClick}>Register</button>
         </div>
@@ -448,23 +479,19 @@ console.log(err)
   {/* {message && <div className={`message ${err ? 'error' : 'success'}`}>{message}
   </div>} */}
 
-
-
         <div className="signup-link">Not a member? <a href>Signup now</a></div>
-      
-
-
 
       
       </form>
+{/* STUDENT SIGN UP */}
+
 
 
       {/* further student signup form */}
 
 
 
-
-
+{/* RECRUITER SIGN UP FORM */}
       <form action="#" className="signup">
         {/* considering signup as the recruiter sign up side of the toggle func */}
 
@@ -475,19 +502,37 @@ console.log(err)
         <div className='flex-container-left'>
 
         <div className="field">
-          <input type="text" placeholder="First Name" required />
+
+          <input type="text" 
+          placeholder="First Name" 
+          name="RecFirstname"
+          onChange={rechandleChange}
+          required />
+
         </div>
 
         <div className="field">
-          <input type="text" placeholder="Last Name" required />
+          <input type="text" 
+          placeholder="Last Name" 
+          name="RecLastname"
+          onChange={rechandleChange}
+          required />
         </div>
 
         <div className="field">
-          <input type="email" placeholder="Email Address" required />
+          <input type="email" 
+          placeholder="Email Address" 
+          name="RecEmail"
+          onChange={rechandleChange}
+          required />
         </div>
 
         <div className="field">
-          <input type="date" placeholder="Date of Birth" required />
+          <input type="text" 
+          placeholder="Company Name"
+          name="CompanyName"
+          onChange={rechandleChange}
+          required />
         </div>
         
         </div>
@@ -495,20 +540,32 @@ console.log(err)
         <div className='flex-container-right'>
 
         <div className="field">
-          <input type="text" placeholder="Country" required />
+          <input type="text" 
+          placeholder="Country" 
+          name="RecCountry"
+          onChange={rechandleChange}
+          required />
         </div>
 
         <div className="field">
-          <input type="number" placeholder="Phone Number" required />
+          <input type="number" 
+          placeholder="Phone Number" 
+          name="RecPhoneNum"
+          onChange={rechandleChange}
+          required />
         </div>
 
         <div className="field">
-          <input type="password" placeholder="Password" required />
+          <input type="password" 
+          placeholder="Password" 
+          name="RecPass"
+          onChange={rechandleChange}
+          required />
         </div>
 
-        <div className="field">
+        {/* <div className="field">
           <input type="password" placeholder="Confirm Password" required />
-        </div>
+        </div> */}
 
         </div>
         
@@ -516,13 +573,19 @@ console.log(err)
 
 
 
+        <div className="field btn"> 
+          <div className="btn-layer" >
 
-        <div className="field btn">
-          <div className="btn-layer" />
-          <input type="submit" defaultValue="Signup" />
+          {/* <input type="submit" defaultValue="Signup" /> */}
+          <button onClick={rechandleClick}>Register</button>
+        </div>
         </div>
 
+        {recerr && recerr}
+
       </form>
+{/* RECRUITER SIGN UP FORM */}
+
 
 
     </div> {/* inner form div */}
@@ -555,35 +618,4 @@ export default LoginSignup
 
 
 
-     {/* <h2>Create your Account</h2>
-      <label>
-
-        <span>Name</span>
-        <input type="text" placeholder='Enter your Name' name='name' 
-        //  onChange={handleInput}
-          className='form-control rounded-0'/>
-         {errors.name && <span className='text-danger'>{errors.name}</span>}
-      
-      </label>
-      <label>
-        <span>Email</span>
-        <input type="email" placeholder='Enter your Email' name='email'
-        // onChange={handleInput} 
-        className='form-control rounded-0'/>
-        {errors.email && <span className='text-danger'>{errors.email}</span>}
-      </label>
-
-      <label>
-        <span>Password</span>
-        <input type="password" placeholder='Enter your Password' name='password'
-        // onChange={handleInput} 
-        className='form-control rounded-0'/>
-        {errors.password && <span className='text-danger'>{errors.password}</span>}
-      </label>
-
-      <button type="button" className="submit" 
-      // onClick={handleSubmit} 
-      style={{ display: 'block', margin: 'auto' }}>Sign Up</button> 
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-  {successMessage && <div className="success-message">{successMessage}</div>} */}
-      {/* add onclick btn here, dont add brackets */}
+    
